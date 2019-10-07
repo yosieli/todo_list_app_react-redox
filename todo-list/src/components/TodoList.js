@@ -1,42 +1,24 @@
-import React from "react";
-import { connect } from "react-redux";
-import Todo from "./Todo";
-// import { getTodos } from "../redux/selectors";
-import { getTodosByVisibilityFilter } from "../reducers/selectors";
-import { VISIBILITY_FILTERS } from "../reducers/constants";
+import React from 'react'
+import PropTypes from 'prop-types'
+import Todo from './Todo'
 
-const TodoList = ({ todos }) => (
-  <ul className="todo-list">
-    {todos && todos.length
-      ? todos.map((todo, index) => {
-          return <Todo key={`todo-${todo.id}`} todo={todo} />;
-        })
-      : "No todos, yay!"}
+const TodoList = ({ todos, toggleTodo }) => (
+  <ul>
+    {todos.map(todo => (
+      <Todo key={todo.id} {...todo} onClick={() => toggleTodo(todo.id)} />
+    ))}
   </ul>
-);
+)
 
-// const mapStateToProps = state => {
-//   const { byIds, allIds } = state.todos || {};
-//   const todos =
-//     allIds && state.todos.allIds.length
-//       ? allIds.map(id => (byIds ? { ...byIds[id], id } : null))
-//       : null;
-//   return { todos };
-// };
+TodoList.propTypes = {
+  todos: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      completed: PropTypes.bool.isRequired,
+      text: PropTypes.string.isRequired
+    }).isRequired
+  ).isRequired,
+  toggleTodo: PropTypes.func.isRequired
+}
 
-const mapStateToProps = state => {
-  const { visibilityFilter } = state;
-  const todos = getTodosByVisibilityFilter(state, visibilityFilter);
-  return { todos };
-  //   const allTodos = getTodos(state);
-  //   return {
-  //     todos:
-  //       visibilityFilter === VISIBILITY_FILTERS.ALL
-  //         ? allTodos
-  //         : visibilityFilter === VISIBILITY_FILTERS.COMPLETED
-  //           ? allTodos.filter(todo => todo.completed)
-  //           : allTodos.filter(todo => !todo.completed)
-  //   };
-};
-// export default TodoList;
-export default connect(mapStateToProps)(TodoList);
+export default TodoList
